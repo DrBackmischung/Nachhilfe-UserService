@@ -1,4 +1,4 @@
-package users
+package datamodel
 import "reflect"
 type User struct {
 	id                 	string `json:"id"`
@@ -9,10 +9,10 @@ type User struct {
 	mail             	string `json:"mail"`
 	phone             	string `json:"phone"`
 	address				struct {
-		Street             	string `json:"street"`
-		HouseNr             string `json:"houseNr"`
-		ZipCode             string `json:"zipCode"`
-		City             	string `json:"city"`
+		street             	string `json:"street"`
+		houseNr             string `json:"houseNr"`
+		zipCode             string `json:"zipCode"`
+		city             	string `json:"city"`
 	} `json:"address"`
 	skills				[]Skill `json:"skills"`
 	password			string `json:"password"`

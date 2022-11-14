@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"text/template"
-        "github.com/neo4j/neo4j-go-driver/neo4j"
+	// "text/template"
+    "github.com/neo4j/neo4j-go-driver/neo4j"
 )
 func main() {
 	// connect to database
@@ -17,13 +17,14 @@ func main() {
 	// Close driver and session after func ends
 	defer driver.Close()
 	defer session.Close()
+	const port = ":3000"
 	// pass the session to the model layer
-	events.SetDB(session)
+	// events.SetDB(session)
 	// populate templates
-	controller.Startup()
+	// controller.Startup()
 	// listen on specified port
-	log.Println("Starting to listen..")
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	log.Println("Starting to listen on port "+port+"...")
+	log.Fatal(http.ListenAndServe(port, nil))
 }
 
 func ConnectToDB() (neo4j.Session, neo4j.Driver, error) {
