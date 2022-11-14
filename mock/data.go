@@ -9,6 +9,7 @@ var Skills = []datamodel.Skill {
 	{Id:"latein5-10", Name:"Latein", Level:"Klasse 5-10"},
 	{Id:"deutsch1-12", Name:"Deutsch", Level:"Klasse 1-12"},
 	{Id:"se1", Name:"Software Engineering I", Level:"Universität"},
+	{Id:"se2", Name:"Software Engineering II", Level:"Universität"},
 }
 
 var Users = []datamodel.User {
