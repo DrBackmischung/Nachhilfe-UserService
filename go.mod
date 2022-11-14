@@ -1,4 +1,4 @@
-module example/Nachhilfe-UserService
+module github.com/DrBackmischung/Nachhilfe-UserService
 
 go 1.19
 
