@@ -1,2 +1,2 @@
 # Nachhilfe-UserService
-SE III: UserService mit Ruby on Rails
+SE III: UserService mit Golang
