@@ -15,6 +15,7 @@ type User struct {
 		City             	string `json:"city"`
 	} `json:"address"`
 	skills				[]Skill `json:"skills"`
+	password			string `json:"password"`
 }
 
 type Skill struct {
