@@ -18,10 +18,10 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/skills", rest.GetSkills(db))
-	router.GET("/skills/:id", rest.GetSkill)
-	router.POST("/skills", rest.CreateSkill)
-	//router.PUT("/skills/:id", rest.UpdateSkill)
-	//router.DELETE("/skills/:id", rest.DeleteSkill)
+	router.GET("/skills/:id", rest.GetSkill(db))
+	router.POST("/skills", rest.CreateSkill(db))
+	router.PUT("/skills/:id", rest.UpdateSkill(db))
+	router.DELETE("/skills/:id", rest.DeleteSkill(db))
 
 	router.GET("/users", rest.GetUsers)
 	router.GET("/users/:id", rest.GetUser)
