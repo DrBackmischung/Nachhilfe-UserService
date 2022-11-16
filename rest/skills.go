@@ -1,13 +1,14 @@
 package rest
 
 import (
-	"net/http"
-	"errors"
 	"database/sql"
-    "github.com/gin-gonic/gin"
+	"errors"
+	"net/http"
+
+	datamodel "github.com/DrBackmischung/Nachhilfe-UserService/lib"
 	"github.com/DrBackmischung/Nachhilfe-UserService/mock"
-	"github.com/DrBackmischung/Nachhilfe-UserService/lib"
-	"github.com/DrBackmischung/Nachhilfe-UserService/sql"
+	query "github.com/DrBackmischung/Nachhilfe-UserService/sql"
+	"github.com/gin-gonic/gin"
 )
 
 func querySkills(id string) (*datamodel.Skill, error) {
@@ -19,7 +20,7 @@ func querySkills(id string) (*datamodel.Skill, error) {
 	return &datamodel.Skill{}, errors.New("Skill nicht gefunden!")
 }
 
-func GetSkills(db *sql.DB) gin.HandlerFunc{
+func GetSkills(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		skills, err := query.GetSkills(db)
 		if err != nil {
@@ -32,7 +33,7 @@ func GetSkills(db *sql.DB) gin.HandlerFunc{
 	//context.IndentedJSON(http.StatusOK, mock.Skills)
 }
 
-func GetSkill(context *gin.Context){
+func GetSkill(context *gin.Context) {
 	id := context.Param("id")
 	skill, error := querySkills(id)
 	if error != nil {
@@ -42,14 +43,21 @@ func GetSkill(context *gin.Context){
 	}
 }
 
-func CreateSkill(context *gin.Context){
-	var newSkill datamodel.Skill
+func CreateSkill(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		var newSkill datamodel.Skill
 
-	if err := context.BindJSON(&newSkill); err != nil {
-		return
+		if err := context.BindJSON(&newSkill); err != nil {
+			return
+		}
+
+		e := query.AddSkill(newSkill, db)
+		if e != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusCreated, newSkill)
 	}
 
-	mock.Skills = append(mock.Skills, newSkill)
-	context.IndentedJSON(http.StatusCreated, newSkill)
-}
+	return gin.HandlerFunc(handler)
 
+}

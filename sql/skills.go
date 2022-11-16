@@ -3,8 +3,10 @@ package query
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	datamodel "github.com/DrBackmischung/Nachhilfe-UserService/lib"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/DrBackmischung/Nachhilfe-UserService/lib"
 )
 
 func GetSkills(db *sql.DB) (*[]datamodel.Skill, error) {
@@ -26,4 +28,21 @@ func GetSkills(db *sql.DB) (*[]datamodel.Skill, error) {
 		return nil, err
 	}
 	return &skills, nil
+}
+
+func AddSkill(skill datamodel.Skill, db *sql.DB) error {
+	statement, err := db.Prepare("INSERT INTO `skills`(`id`,`name`,`level`)VALUES(?, ?, ?)")
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	_, errInsert := statement.Exec(&skill.Id, &skill.Name, &skill.Level)
+
+	if errInsert != nil {
+		log.Fatal(errInsert)
+		return errInsert
+	}
+
+	return nil
 }
