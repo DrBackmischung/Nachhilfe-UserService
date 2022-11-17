@@ -70,7 +70,7 @@ func CreateSkill(db *sql.DB) gin.HandlerFunc {
 			context.AbortWithStatus(http.StatusInternalServerError)
 		}
 		if result == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatus(http.StatusConflict)
 		}
 		context.IndentedJSON(http.StatusCreated, newSkill)
 	}

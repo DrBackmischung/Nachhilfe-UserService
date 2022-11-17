@@ -84,6 +84,10 @@ func GetUsersForSkill(db *sql.DB, id string) (*[]datamodel.User, error) {
 // CREATE
 
 func CreateUser(user datamodel.User, db *sql.DB) (sql.Result, error) {
+	u, _ := GetUser(db, user.Id)
+	if u != nil {
+		return nil, nil
+	}
 	statement, err := db.Prepare("INSERT INTO `users`(`id`,`userName`,`lastName`,`firstName`,`gender`,`mail`,`phone`,`street`,`houseNr`,`zipCode`,`city`,`password`)VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
