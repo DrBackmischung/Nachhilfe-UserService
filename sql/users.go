@@ -93,6 +93,23 @@ func CreateUser(user datamodel.User, db *sql.DB) error {
 	return nil
 }
 
+func AddSkillToUser(db *sql.DB, userId string, skillId string) error {
+	statement, err := db.Prepare("INSERT INTO `users_skills`(`userId`,`skillId`)VALUES(?, ?)")
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	_, errInsert := statement.Exec(userId, skillId)
+
+	if errInsert != nil {
+		log.Fatal(errInsert)
+		return errInsert
+	}
+
+	return nil
+}
+
 // UPDATE
 
 func UpdateUser(user datamodel.User, db *sql.DB, id string) error {
@@ -116,6 +133,15 @@ func UpdateUser(user datamodel.User, db *sql.DB, id string) error {
 
 func DeleteUser(db *sql.DB, id string) error {
 	_, err := db.Query("DELETE FROM users WHERE id='"+id+"'")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
+
+func RemoveSkillFromUser(db *sql.DB, userId string, skillId string) error {
+	_, err := db.Query("DELETE FROM users_skills WHERE userId='"+userId+"' AND skillId='"+skillId+"'")
 	if err != nil {
 		fmt.Println(err)
 		return err

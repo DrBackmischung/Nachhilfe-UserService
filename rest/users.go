@@ -70,6 +70,20 @@ func CreateUser(db *sql.DB) gin.HandlerFunc {
 
 }
 
+func AddSkillToUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		userId := context.Param("userId")
+		skillId := context.Param("skillId")
+		err := query.AddSkillToUser(db, userId, skillId)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, nil)
+	}
+
+	return gin.HandlerFunc(handler)
+}
+
 // UPDATE
 
 func UpdateUser(db *sql.DB) gin.HandlerFunc {
@@ -99,6 +113,20 @@ func DeleteUser(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		id := context.Param("id")
 		err := query.DeleteUser(db, id)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, nil)
+	}
+
+	return gin.HandlerFunc(handler)
+}
+
+func RemoveSkillFromUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		userId := context.Param("userId")
+		skillId := context.Param("skillId")
+		err := query.RemoveSkillFromUser(db, userId, skillId)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
 		}

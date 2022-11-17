@@ -32,6 +32,8 @@ func main() {
 	router.POST("/skills", rest.CreateSkill(db))
 	router.POST("/users", rest.CreateUser(db))
 
+	router.POST("/users/add/:userId/:skillId", rest.AddSkillToUser(db))
+
 	// UPDATE
 	router.PUT("/skills/:id", rest.UpdateSkill(db))
 	router.PUT("/users/:id", rest.UpdateUser(db))
@@ -39,6 +41,8 @@ func main() {
 	// DELETE
 	router.DELETE("/skills/:id", rest.DeleteSkill(db))
 	router.DELETE("/users/:id", rest.DeleteUser(db))
+	
+	router.DELETE("/users/remove/:userId/:skillId", rest.RemoveSkillFromUser(db))
 
 	router.Run("localhost:6001")
 	
