@@ -72,7 +72,7 @@ func CreateUser(db *sql.DB) gin.HandlerFunc {
 
 func AddSkillToUser(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
-		userId := context.Param("userId")
+		userId := context.Param("id")
 		skillId := context.Param("skillId")
 		err := query.AddSkillToUser(db, userId, skillId)
 		if err != nil {
@@ -124,7 +124,7 @@ func DeleteUser(db *sql.DB) gin.HandlerFunc {
 
 func RemoveSkillFromUser(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
-		userId := context.Param("userId")
+		userId := context.Param("id")
 		skillId := context.Param("skillId")
 		err := query.RemoveSkillFromUser(db, userId, skillId)
 		if err != nil {
