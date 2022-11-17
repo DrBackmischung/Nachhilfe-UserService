@@ -17,14 +17,28 @@ func main() {
 	defer db.Close()
 
 	router := gin.Default()
-	router.GET("/skills", rest.GetSkills(db))
-	router.GET("/skills/:id", rest.GetSkill(db))
-	router.POST("/skills", rest.CreateSkill(db))
-	router.PUT("/skills/:id", rest.UpdateSkill(db))
-	router.DELETE("/skills/:id", rest.DeleteSkill(db))
 
-	router.GET("/users", rest.GetUsers)
-	router.GET("/users/:id", rest.GetUser)
+	// READ
+	router.GET("/skills", rest.GetSkills(db))
+	router.GET("/users", rest.GetUsers(db))
+
+	router.GET("/skills/:id", rest.GetSkill(db))
+	router.GET("/users/:id", rest.GetUser(db))
+
+	router.GET("/skills/:id/users", rest.GetUsersForSkill(db))
+	router.GET("/users/:id/skills", rest.GetSkillsForUser(db))
+
+	// CREATE
+	router.POST("/skills", rest.CreateSkill(db))
+	router.POST("/users", rest.CreateUser(db))
+
+	// UPDATE
+	router.PUT("/skills/:id", rest.UpdateSkill(db))
+	router.PUT("/users/:id", rest.UpdateUser(db))
+
+	// DELETE
+	router.DELETE("/skills/:id", rest.DeleteSkill(db))
+	router.DELETE("/users/:id", rest.DeleteUser(db))
 
 	router.Run("localhost:6001")
 	

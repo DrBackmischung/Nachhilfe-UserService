@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// READ
+
 func GetSkills(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		skills, err := query.GetSkills(db)
@@ -34,6 +36,21 @@ func GetSkill(db *sql.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(handler)
 }
 
+func GetSkillsForUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		id := context.Param("id")
+		skills, err := query.GetSkillsForUser(db, id)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, skills)
+	}
+
+	return gin.HandlerFunc(handler)
+}
+
+// CREATE
+
 func CreateSkill(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		var newSkill datamodel.Skill
@@ -52,6 +69,8 @@ func CreateSkill(db *sql.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(handler)
 
 }
+
+// UPDATE
 
 func UpdateSkill(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
@@ -73,6 +92,8 @@ func UpdateSkill(db *sql.DB) gin.HandlerFunc {
 	return gin.HandlerFunc(handler)
 
 }
+
+// DELETE
 
 func DeleteSkill(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {

@@ -1,32 +1,109 @@
 package rest
 
 import (
+	"database/sql"
 	"net/http"
-	"errors"
-    "github.com/gin-gonic/gin"
-	"github.com/DrBackmischung/Nachhilfe-UserService/mock"
-	"github.com/DrBackmischung/Nachhilfe-UserService/lib"
+
+	datamodel "github.com/DrBackmischung/Nachhilfe-UserService/lib"
+	query "github.com/DrBackmischung/Nachhilfe-UserService/sql"
+	"github.com/gin-gonic/gin"
 )
 
-func queryUsers(id string) (*datamodel.User, error) {
-	for counter, value := range mock.Users {
-		if value.Id == id {
-			return &mock.Users[counter], nil
+// READ
+
+func GetUsers(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		users, err := query.GetUsers(db)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
 		}
+		context.IndentedJSON(http.StatusOK, users)
 	}
-	return &datamodel.User{}, errors.New("User nicht gefunden!")
+
+	return gin.HandlerFunc(handler)
 }
 
-func GetUsers(context *gin.Context){
-	context.IndentedJSON(http.StatusOK, mock.Users)
+func GetUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		id := context.Param("id")
+		users, err := query.GetUser(db, id)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, users)
+	}
+
+	return gin.HandlerFunc(handler)
 }
 
-func GetUser(context *gin.Context){
-	id := context.Param("id")
-	user, error := queryUsers(id)
-	if error != nil {
-		context.IndentedJSON(http.StatusNotFound, user)
-	} else {
-		context.IndentedJSON(http.StatusOK, user)
+func GetUsersForSkill(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		id := context.Param("id")
+		users, err := query.GetUsersForSkill(db, id)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, users)
 	}
+
+	return gin.HandlerFunc(handler)
+}
+
+// CREATE
+
+func CreateUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		var newUser datamodel.User
+
+		if err := context.BindJSON(&newUser); err != nil {
+			return
+		}
+
+		e := query.CreateUser(newUser, db)
+		if e != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusCreated, newUser)
+	}
+
+	return gin.HandlerFunc(handler)
+
+}
+
+// UPDATE
+
+func UpdateUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		var newUser datamodel.User
+
+		if err := context.BindJSON(&newUser); err != nil {
+			return
+		}
+
+		id := context.Param("id")
+
+		e := query.UpdateUser(newUser, db, id)
+		if e != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, newUser)
+	}
+
+	return gin.HandlerFunc(handler)
+
+}
+
+// DELETE
+
+func DeleteUser(db *sql.DB) gin.HandlerFunc {
+	handler := func(context *gin.Context) {
+		id := context.Param("id")
+		err := query.DeleteUser(db, id)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+		}
+		context.IndentedJSON(http.StatusOK, nil)
+	}
+
+	return gin.HandlerFunc(handler)
 }
