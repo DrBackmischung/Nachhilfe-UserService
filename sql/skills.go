@@ -50,10 +50,17 @@ func GetSkill(db *sql.DB, id string) (*[]datamodel.Skill, error) {
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+	if len(skills) == 0 {
+		return nil, nil
+	}
 	return &skills, nil
 }
 
 func GetSkillsForUser(db *sql.DB, id string) (*[]datamodel.Skill, error) {
+	user, _ := GetUser(db, id)
+	if user == nil {
+		return nil, nil
+	}
 	rows, err := db.Query("SELECT s.id, s.name, s.level FROM skills AS s INNER JOIN users_skills AS u ON s.id = u.skillId WHERE u.userId = '"+id+"'")
 	if err != nil {
 		fmt.Println(err)
@@ -76,49 +83,57 @@ func GetSkillsForUser(db *sql.DB, id string) (*[]datamodel.Skill, error) {
 
 // CREATE
 
-func CreateSkill(skill datamodel.Skill, db *sql.DB) error {
+func CreateSkill(skill datamodel.Skill, db *sql.DB) (sql.Result, error) {
 	statement, err := db.Prepare("INSERT INTO `skills`(`id`,`name`,`level`)VALUES(?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
-		return err
+		return nil, err
 	}
 
-	_, errInsert := statement.Exec(&skill.Id, &skill.Name, &skill.Level)
+	result, errInsert := statement.Exec(&skill.Id, &skill.Name, &skill.Level)
 
 	if errInsert != nil {
 		log.Fatal(errInsert)
-		return errInsert
+		return nil, errInsert
 	}
 
-	return nil
+	return result, nil
 }
 
 // UPDATE
 
-func UpdateSkill(skill datamodel.Skill, db *sql.DB, id string) error {
+func UpdateSkill(skill datamodel.Skill, db *sql.DB, id string) (sql.Result, error) {
+	s, _ := GetSkill(db, id)
+	if s == nil {
+		return nil, nil
+	}
 	statement, err := db.Prepare("UPDATE skills SET id=?, name=?, level=? WHERE id='"+id+"'")
 	if err != nil {
 		log.Fatal(err)
-		return err
+		return nil, err
 	}
 
-	_, errInsert := statement.Exec(&skill.Id, &skill.Name, &skill.Level)
+	result, errInsert := statement.Exec(&skill.Id, &skill.Name, &skill.Level)
 
 	if errInsert != nil {
 		log.Fatal(errInsert)
-		return errInsert
+		return nil, errInsert
 	}
 
-	return nil
+	return result, nil
 }
 
 // DELETE
 
-func DeleteSkill(db *sql.DB, id string) error {
-	_, err := db.Query("DELETE FROM skills WHERE id='"+id+"'")
+func DeleteSkill(db *sql.DB, id string) (*sql.Rows, error) {
+	skill, _ := GetSkill(db, id)
+	if skill == nil {
+		return nil, nil
+	}
+	result, err := db.Query("DELETE FROM skills WHERE id='"+id+"'")
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return result, nil
 }
