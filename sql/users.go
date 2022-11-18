@@ -56,6 +56,30 @@ func GetUser(db *sql.DB, id string) (*[]datamodel.User, error) {
 	return &users, nil
 }
 
+func GetUserByUserName(db *sql.DB, userName string) (*[]datamodel.User, error) {
+	rows, err := db.Query("SELECT * FROM users WHERE userName='"+userName+"' LIMIT 1")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	var users []datamodel.User
+	for rows.Next() {
+		var user datamodel.User
+		if errLine := rows.Scan(&user.Id, &user.UserName, &user.LastName, &user.FirstName, &user.Gender, &user.Mail, &user.Phone, &user.Street, &user.HouseNr, &user.ZipCode, &user.City, &user.Password); errLine != nil {
+			fmt.Println(errLine)
+			return nil, errLine
+		}
+		users = append(users, user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, nil
+	}
+	return &users, nil
+}
+
 func GetUsersForSkill(db *sql.DB, id string) (*[]datamodel.User, error) {
 	skill, _ := GetSkill(db, id)
 	if skill == nil {
