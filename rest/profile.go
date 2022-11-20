@@ -28,6 +28,9 @@ func Login(db *sql.DB) gin.HandlerFunc {
 			context.AbortWithStatus(http.StatusNotFound)
 		}
 		var u = *user
+		if *user == nil {
+			context.AbortWithStatus(http.StatusNotFound)
+		}
 		if u[0].Password != login.Password {
 			context.AbortWithStatus(http.StatusConflict)
 		}
