@@ -21,13 +21,13 @@ func Login(db *sql.DB) gin.HandlerFunc {
 		}
 
 		user, err := query.GetUserByUserName(db, login.UserName)
-		var u = *user
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
 		}
 		if user == nil {
 			context.AbortWithStatus(http.StatusNotFound)
 		}
+		var u = *user
 		if u[0].Password != login.Password {
 			context.AbortWithStatus(http.StatusConflict)
 		}
