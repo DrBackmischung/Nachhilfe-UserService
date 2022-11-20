@@ -23,16 +23,20 @@ func Login(db *sql.DB) gin.HandlerFunc {
 		user, err := query.GetUserByUserName(db, login.UserName)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if user == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		var u = *user
 		if *user == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		if u[0].Password != login.Password {
 			context.AbortWithStatus(http.StatusConflict)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, user)
 	}
@@ -45,6 +49,20 @@ func Login(db *sql.DB) gin.HandlerFunc {
 func Register(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		var newUser datamodel.Registration
+		if err := context.BindJSON(&newUser); err != nil {
+			return
+		}
+
+		user, err := query.GetUserByUserName(db, newUser.UserName)
+		if err != nil {
+			context.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		if user != nil {
+			context.AbortWithStatus(http.StatusConflict)
+			return
+		}
+
 		var toBeRegistered datamodel.User
 
 		toBeRegistered.Id = uuid.New().String()
@@ -60,16 +78,18 @@ func Register(db *sql.DB) gin.HandlerFunc {
 		toBeRegistered.City = newUser.City
 		toBeRegistered.Password = newUser.Password
 
-		if err := context.BindJSON(&newUser); err != nil {
-			return
-		}
-
 		result, e := query.CreateUser(toBeRegistered, db)
 		if e != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if result == nil {
 			context.AbortWithStatus(http.StatusConflict)
+			return
+		}
+		if newUser.Password != newUser.ConfirmPassword {
+			context.AbortWithStatus(http.StatusConflict)
+			return
 		}
 		context.IndentedJSON(http.StatusCreated, newUser)
 	}

@@ -16,6 +16,7 @@ func GetSkills(db *sql.DB) gin.HandlerFunc {
 		skills, err := query.GetSkills(db)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
 	}
@@ -29,9 +30,11 @@ func GetSkill(db *sql.DB) gin.HandlerFunc {
 		skills, err := query.GetSkill(db, id)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if skills == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
 	}
@@ -45,9 +48,11 @@ func GetSkillsForUser(db *sql.DB) gin.HandlerFunc {
 		skills, err := query.GetSkillsForUser(db, id)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if skills == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
 	}
@@ -68,9 +73,11 @@ func CreateSkill(db *sql.DB) gin.HandlerFunc {
 		result, e := query.CreateSkill(newSkill, db)
 		if e != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if result == nil {
 			context.AbortWithStatus(http.StatusConflict)
+			return
 		}
 		context.IndentedJSON(http.StatusCreated, newSkill)
 	}
@@ -94,9 +101,11 @@ func UpdateSkill(db *sql.DB) gin.HandlerFunc {
 		result, e := query.UpdateSkill(newSkill, db, id)
 		if e != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if result == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, newSkill)
 	}
@@ -113,9 +122,11 @@ func DeleteSkill(db *sql.DB) gin.HandlerFunc {
 		result, err := query.DeleteSkill(db, id)
 		if err != nil {
 			context.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		if result == nil {
 			context.AbortWithStatus(http.StatusNotFound)
+			return
 		}
 		context.IndentedJSON(http.StatusOK, nil)
 	}
