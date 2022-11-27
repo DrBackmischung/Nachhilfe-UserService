@@ -15,7 +15,9 @@ func GetSkills(db *sql.DB) gin.HandlerFunc {
 	handler := func(context *gin.Context) {
 		skills, err := query.GetSkills(db)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
@@ -29,11 +31,15 @@ func GetSkill(db *sql.DB) gin.HandlerFunc {
 		id := context.Param("id")
 		skills, err := query.GetSkill(db, id)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if skills == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
@@ -47,11 +53,15 @@ func GetSkillsForUser(db *sql.DB) gin.HandlerFunc {
 		id := context.Param("id")
 		skills, err := query.GetSkillsForUser(db, id)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if skills == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, skills)
@@ -72,11 +82,15 @@ func CreateSkill(db *sql.DB) gin.HandlerFunc {
 
 		result, e := query.CreateSkill(newSkill, db)
 		if e != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if result == nil {
-			context.AbortWithStatus(http.StatusConflict)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "User already exist!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusCreated, newSkill)
@@ -100,11 +114,15 @@ func UpdateSkill(db *sql.DB) gin.HandlerFunc {
 
 		result, e := query.UpdateSkill(newSkill, db, id)
 		if e != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if result == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, newSkill)
@@ -121,11 +139,15 @@ func DeleteSkill(db *sql.DB) gin.HandlerFunc {
 		id := context.Param("id")
 		result, err := query.DeleteSkill(db, id)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if result == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, nil)
