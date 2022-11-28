@@ -29,13 +29,12 @@ func main() {
 	router.GET("/skills/:id/users", rest.GetUsersForSkill(db))
 	router.GET("/users/:id/skills", rest.GetSkillsForUser(db))
 
-	router.GET("/login", rest.Login(db))
-
 	// CREATE
 	router.POST("/skills", rest.CreateSkill(db))
 	router.POST("/users", rest.CreateUser(db))
 
 	router.POST("/register", rest.Register(db))
+	router.POST("/login", rest.Login(db))
 
 	router.POST("/users/:id/:skillId", rest.AddSkillToUser(db))
 
