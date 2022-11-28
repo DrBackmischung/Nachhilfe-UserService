@@ -88,8 +88,8 @@ func CreateUser(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 		if user != nil {
-			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": "Ressource not found!",
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "User already exist!",
 			})
 			return
 		}
@@ -102,8 +102,8 @@ func CreateUser(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 		if result == nil {
-			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": "Ressource not found!",
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
 			})
 			return
 		}

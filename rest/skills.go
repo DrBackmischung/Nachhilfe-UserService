@@ -88,8 +88,8 @@ func CreateSkill(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 		if result == nil {
-			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"error": "User already exist!",
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "Skill already exist!",
 			})
 			return
 		}

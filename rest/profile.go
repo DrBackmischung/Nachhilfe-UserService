@@ -22,20 +22,28 @@ func Login(db *sql.DB) gin.HandlerFunc {
 
 		user, err := query.GetUserByUserName(db, login.UserName)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if user == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		var u = *user
 		if *user == nil {
-			context.AbortWithStatus(http.StatusNotFound)
+			context.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": "Ressource not found!",
+			})
 			return
 		}
 		if u[0].Password != login.Password {
-			context.AbortWithStatus(http.StatusConflict)
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "Password wrong!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusOK, user)
@@ -55,11 +63,15 @@ func Register(db *sql.DB) gin.HandlerFunc {
 
 		user, err := query.GetUserByUserName(db, newUser.UserName)
 		if err != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if user != nil {
-			context.AbortWithStatus(http.StatusConflict)
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "User already exist!",
+			})
 			return
 		}
 
@@ -80,15 +92,21 @@ func Register(db *sql.DB) gin.HandlerFunc {
 
 		result, e := query.CreateUser(toBeRegistered, db)
 		if e != nil {
-			context.AbortWithStatus(http.StatusInternalServerError)
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"error": "Server Error!",
+			})
 			return
 		}
 		if result == nil {
-			context.AbortWithStatus(http.StatusConflict)
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "Conflict!",
+			})
 			return
 		}
 		if newUser.Password != newUser.ConfirmPassword {
-			context.AbortWithStatus(http.StatusConflict)
+			context.AbortWithStatusJSON(http.StatusConflict, gin.H{
+				"error": "Passwords don't match!",
+			})
 			return
 		}
 		context.IndentedJSON(http.StatusCreated, newUser)
